@@ -1,0 +1,7 @@
+node_modules/
+sigatc-react/node_modules/
+sigatc-react/dist/
+.DS_Store
+*.log
+coverage/
+vite-dist/
