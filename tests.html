@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Testes SIGATC</title>
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script>
+      mocha.setup('bdd');
+      const expect = chai.expect;
+    </script>
+    <script>
+      function generateSample(hour){
+        const m = ((hour/24)|0)%12;
+        const seasonal = 23 + 6*Math.sin((m/12)*Math.PI*2);
+        const diurnal = 2*Math.sin(((hour%24)/24)*Math.PI*2);
+        const precip = m>=10||m<=3 ? Math.max(0, 2*Math.random()) : Math.max(0, 0.5*Math.random());
+        const humidity = Math.min(100, Math.max(30, 60 + (precip>0.5?20:0) + 10*Math.random()));
+        const wind = Math.max(0, 3 + 5*Math.random());
+        const temp = seasonal + diurnal + (precip>1? -1.5: 0) + (humidity>80? -0.5:0);
+        const riskScore = Math.min(1, (precip/5) + (humidity/100)*0.4 + (wind/30)*0.2);
+        const riskLevel = riskScore>0.6?'red': riskScore>0.35?'yellow':'green';
+        return { temp, precip, humidity, wind, riskLevel };
+      }
+
+      describe('Gerador de dados climáticos', function(){
+        it('gera valores dentro de faixas realistas', function(){
+          const s = generateSample(12);
+          expect(s.temp).to.be.within(10, 45);
+          expect(s.precip).to.be.within(0, 5);
+          expect(s.humidity).to.be.within(30, 100);
+          expect(s.wind).to.be.within(0, 30);
+          expect(['red','yellow','green']).to.include(s.riskLevel);
+        });
+        it('reflete sazonalidade em meses chuvosos', function(){
+          const wet = generateSample(24*11);
+          const dry = generateSample(24*6);
+          expect(wet.precip).to.be.at.least(dry.precip);
+        });
+      });
+
+      mocha.run();
+    </script>
+  </body>
+</html>

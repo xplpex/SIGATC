@@ -1,0 +1,5 @@
+#root { min-height: 100vh }
+.mini-risk { padding:2px 6px; border-radius:999px; font-size:11px; font-weight:700 }
+.risk-green { background:#d1fae5; color:#065f46 }
+.risk-yellow { background:#fde68a; color:#92400e }
+.risk-red { background:#fecaca; color:#7f1d1d }

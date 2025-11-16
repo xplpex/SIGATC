@@ -1,0 +1,144 @@
+Variáveis Meteorológicas Utilizadas
+Para construir o modelo de análise e risco climático, foi utilizado um conjunto de variáveis fornecidas pela API Open-Meteo, com foco em elementos diretamente associados a tempestades, enxurradas, alagamentos e instabilidade atmosférica. As variáveis usadas foram:
+Atmosfera
+Temperatura ao nível de 2 metros
+Umidade relativa
+Ponto de orvalho
+Velocidade do vento
+Rajadas de vento
+Direção do vento
+Visibilidade
+
+
+Precipitação
+Precipitação total por hora
+Chuva líquida 
+Showers (pancadas)
+Probabilidade de precipitação
+
+
+Solo
+Umidade do solo (0–1 cm e 1–3 cm)
+Temperatura do solo (0 cm)
+
+
+Variáveis Derivadas Criadas (novos indicadores)
+Além dos dados brutos, foram criados índices próprios para aprimorar a PoC:
+Storm Index (Índice de Tempestade)
+Criado a partir de:
+queda de pressão atmosférica
+aumento da umidade
+diferença entre temperatura e ponto de orvalho
+rajadas de vento
+probabilidade de chuva
+
+
+→ Representa o “potencial de tempestade”.
+SSI – Soil Saturation Index (Índice de Saturação do Solo)
+Criado para estimar:
+nível de encharcamento
+capacidade de absorção
+risco de drenagem reduzida
+IFI – Immediate Flood Index (Índice de Enxurrada / Alagamento Imediato)
+Baseado em:
+chuva recente
+chuva acumulada 1h, 3h, 6h
+visibilidade reduzida
+rajadas de vento
+saturação do solo (SSI)
+
+
+Foi calibrado com pesos diferentes para regiões secas/úmidas.
+Acumulados de Chuva
+Acúmulo de 1 hora
+Acúmulo de 3 horas
+Acúmulo de 6 horas
+Acúmulo de 24 horas
+
+
+O que foi previsto (forecast)
+Além dos dados históricos fornecidos pela API (últimos 92 dias), a Open-Meteo também retornou previsões para os próximos 16 dias.
+Ou seja:
+Dados observados: ~2540 horas
+Dados previstos: ~51 horas
+Esses dados previstos entram nas mesmas variáveis:
+Temperatura
+Umidade
+Ponto de orvalho
+Chuva
+Velocidade do vento
+Rajadas
+Visibilidade
+Umidade do solo
+
+
+Como foi feita a previsão 
+Coleta dos dados históricos e previstos diretamente da API Open-Meteo.
+
+
+Estruturação de tudo em um único dataframe horário contínuo.
+
+
+Criação de novas variáveis derivadas (índices de risco).
+
+
+Correção de dados faltantes usando interpolação linear + preenchimento suave (apenas para PoC).
+
+
+Calibração o modelo para a realidade climática de Goiânia (ajuste de solos secos e thresholds).
+
+
+Geração do Score SIGATC, que combina:
+
+
+Storm Index
+
+
+IFI calibrado
+
+
+Definição do nível de risco para cada hora:
+
+
+🟢 Baixo risco (green)
+
+
+🟡 Risco moderado (yellow)
+
+
+🔴 Risco alto (red)
+
+
+Exportação de tudo em CSV 
+O que contém o CSV final
+O arquivo SIGATC_PoC_dataset.csv contém:
+Variáveis meteorológicas já limpas e sem lacunas
+temperatura
+umidade
+ponto de orvalho
+
+
+velocidade e rajadas de vento
+chuva
+umidade do solo
+visibilidade
+
+
+Índices SIGATC
+Storm Index
+IFI calibrado
+SSI
+Score SIGATC final
+Classificação do risco (green/yellow/red)
+Descrição textual pronta para uso na plataforma
+
+
+Período total
+15/08/2025 → 01/12/2025
+Tamanho
+2592 registros (1 por hora)
+
+
+16 colunas finais
+
+
